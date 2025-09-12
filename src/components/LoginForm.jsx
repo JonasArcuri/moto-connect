@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login, getUserType } from '../services/AuthService';
+import { useAuth } from '../context/AuthContext.jsx';
 
 function LoginForm() {
     const [email, setEmail] = useState('');
@@ -9,6 +9,7 @@ function LoginForm() {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
 
+    const { login } = useAuth();
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
@@ -17,7 +18,6 @@ function LoginForm() {
         setError(null);
         setSuccess(null);
 
-        // Validações básicas no frontend
         if (!email || !password) {
             setError('Por favor, preencha todos os campos.');
             setLoading(false);
@@ -34,32 +34,26 @@ function LoginForm() {
             const result = await login(email, password);
 
             if (result.success) {
-                // Mostrar mensagem de sucesso
                 setSuccess(result.message);
-                
-                // Obter tipo do usuário para redirecionar corretamente
-                const userType = getUserType();
-                
+                const userType = result.data.tipo;
+
                 console.log('Login bem-sucedido:', result.data);
                 console.log('Tipo de usuário:', userType);
 
-                // Pequeno delay para mostrar mensagem de sucesso
                 setTimeout(() => {
-                    // Redirecionar baseado no tipo de usuário
                     switch (userType) {
                         case 'Estabelecimento':
                             navigate('/dashboard-estabelecimento');
                             break;
                         case 'Motoboy':
-                            navigate('/dashboard-motoboy');
+                            navigate('/profile');
                             break;
                         default:
-                            navigate('/profile'); // Fallback para rota padrão
+                            navigate('/profile');
                     }
                 }, 1000);
 
             } else {
-                // Mostrar erro retornado pelo service
                 setError(result.message);
             }
 
@@ -78,7 +72,6 @@ function LoginForm() {
 
     return (
         <div className="flex flex-col min-h-screen bg-white font-sans">
-            {/* Main */}
             <main className="flex-grow flex items-center justify-center">
                 <div className="bg-white border rounded-lg shadow-md p-8 w-96 text-center">
                     <h2 className="text-lg font-bold text-black mb-2">Login - Sistema</h2>
@@ -90,7 +83,6 @@ function LoginForm() {
                     </a>
 
                     <form onSubmit={handleLogin} className="flex flex-col gap-4 mt-6">
-                        {/* Mensagens de erro e sucesso */}
                         {error && (
                             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
                                 <div className="flex justify-between items-center">
@@ -172,7 +164,6 @@ function LoginForm() {
                             )}
                         </button>
 
-                        {/* Informação adicional */}
                         <div className="mt-4 text-xs text-gray-500">
                             <p>Aceita tanto Estabelecimentos quanto Motoboys</p>
                         </div>
@@ -180,7 +171,6 @@ function LoginForm() {
                 </div>
             </main>
 
-            {/* Footer */}
             <footer className="bg-[#4d4d4d] text-white h-14 flex items-center justify-center">
                 <p className="text-xs">Todos os Direitos Reservados @2025.</p>
             </footer>

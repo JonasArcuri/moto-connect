@@ -25,7 +25,6 @@ export const login = async (email, password) => {
     try {
         console.log('Tentando fazer login com:', { email, password: '***' });
         
-        // Garantir que os dados estão corretos
         const loginData = {
             email: email.trim(),
             password: password
@@ -34,28 +33,24 @@ export const login = async (email, password) => {
         const response = await api.post('login', loginData);
         
         console.log('Resposta recebida:', response.data);
-        
-        // Verificar se o login foi bem-sucedido
-        // Seu backend retorna: { id, name, email, token (que é a mensagem), tipo }
+
         if (response.data && response.data.id) {
-            // Estruturar os dados do usuário corretamente
             const userData = {
                 id: response.data.id,
                 name: response.data.name,
                 email: response.data.email,
                 tipo: response.data.tipo,
-                message: response.data.token, // Na verdade é a mensagem de sucesso
+                message: response.data.message, // ✅ corrigido
                 isAuthenticated: true,
                 loginTime: new Date().toISOString()
             };
 
-            // Salvar no localStorage
             localStorage.setItem('user', JSON.stringify(userData));
             
             return {
                 success: true,
                 data: userData,
-                message: response.data.token || 'Login realizado com sucesso!'
+                message: response.data.message || 'Login realizado com sucesso!' // ✅ corrigido
             };
         } else {
             throw new Error('Resposta inválida do servidor');
@@ -69,11 +64,9 @@ export const login = async (email, password) => {
             headers: error.response?.headers
         });
         
-        // Tratamento específico de erros
         let errorMessage = 'Erro interno do servidor';
         
         if (error.response) {
-            // Erro HTTP (4xx, 5xx)
             const status = error.response.status;
             const data = error.response.data;
             
@@ -96,11 +89,9 @@ export const login = async (email, password) => {
                     errorMessage = data?.message || `Erro ${status}`;
             }
         } else if (error.request) {
-            // Erro de rede
-            errorMessage = 'Erro de conexão. Verifique sua internet.';
+            errorMessage = 'Erro de conexão interna, verifique sua API.';
             console.log('Erro de rede:', error.request);
         } else {
-            // Outros erros
             errorMessage = error.message || 'Erro desconhecido';
         }
 
@@ -133,8 +124,6 @@ export const getCurrentUser = () => {
         const userData = localStorage.getItem('user');
         if (userData) {
             const user = JSON.parse(userData);
-            
-            // Verificar se os dados ainda são válidos
             if (user && user.isAuthenticated) {
                 return user;
             }
@@ -142,7 +131,7 @@ export const getCurrentUser = () => {
         return null;
     } catch (error) {
         console.error('Erro ao recuperar usuário:', error);
-        localStorage.removeItem('user'); // Limpar dados corrompidos
+        localStorage.removeItem('user');
         return null;
     }
 };
@@ -170,19 +159,14 @@ export const getUserInfo = () => {
     return null;
 };
 
-// Função para limpar dados inválidos
 export const clearInvalidSession = () => {
     localStorage.removeItem('user');
 };
 
-// Função para validar se o token ainda é válido (se implementar JWT futuramente)
 export const validateSession = async () => {
     const user = getCurrentUser();
     if (!user) {
         return false;
     }
-    
-    // Aqui você pode adicionar validação de token JWT quando implementar
-    // Por enquanto, apenas verifica se existe usuário
     return true;
 };

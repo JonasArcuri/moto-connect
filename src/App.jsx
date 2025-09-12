@@ -1,33 +1,29 @@
-import React, { useState, useEffect } from 'react';
+// src/App.jsx
+import React from 'react';
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
-import { getCurrentUser, logout } from './services/AuthService';
+import { useAuth } from './context/AuthContext.jsx';
+import './App.css';
+
 import ListUsers from './components/ListUsers';
 import UserForm from './components/UserForm';
 import LoginForm from './components/LoginForm';
 import ProfilePage from './components/ProfilePage';
 import Home from './components/Home';
-import './App.css';
+import DashboardEstabelecimento from './components/DashboardEstabelecimento';
+import DashboardMotoboy from './components/DashboardMotoboy';
 
 function App() {
-  const [currentUser, setCurrentUser] = useState(undefined);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const user = getCurrentUser();
-    if (user) {
-      setCurrentUser(user);
-      navigate('/profile'); // se já tiver logado, manda pro perfil
-    }
-  }, [navigate]);
+  const { user, logout } = useAuth();
+  const navigate = useNavigate(); // hook para navegação
 
   const handleLogout = () => {
     logout();
-    setCurrentUser(undefined);
-    navigate('/'); // manda pro login após sair
+    navigate("/"); // redireciona para a Home
   };
 
   return (
     <div className="App">
+      {/* Navbar */}
       <nav className="bg-[#4d4d4d] p-4 shadow-md text-white">
         <ul className="flex items-center justify-center space-x-8 font-medium">
           <li>
@@ -36,13 +32,41 @@ function App() {
             </Link>
           </li>
 
-          {currentUser ? (
+          {user ? (
             <>
               <li>
-                <Link to="/profile" className="text-[#ff9900] hover:underline">
+                <Link
+                  to="/profile"
+                  className="text-[#ff9900] hover:underline"
+                >
                   Perfil
                 </Link>
               </li>
+
+              {/* Se for Estabelecimento */}
+              {user.tipo === "Estabelecimento" && (
+                <li>
+                  <Link
+                    to="/dashboard-estabelecimento"
+                    className="text-[#ff9900] hover:underline"
+                  >
+                    Gerenciamento
+                  </Link>
+                </li>
+              )}
+
+              {/* Se for Motoboy */}
+              {user.tipo === "Motoboy" && (
+                <li>
+                  <Link
+                    to="/dashboard-motoboy"
+                    className="text-[#ff9900] hover:underline"
+                  >
+                    Entregas
+                  </Link>
+                </li>
+              )}
+
               <li>
                 <button
                   onClick={handleLogout}
@@ -55,7 +79,10 @@ function App() {
           ) : (
             <>
               <li>
-                <Link to="/login" className="text-[#ff9900] hover:underline">
+                <Link
+                  to="/login"
+                  className="text-[#ff9900] hover:underline"
+                >
                   Login
                 </Link>
               </li>
@@ -74,6 +101,7 @@ function App() {
 
       <hr />
 
+      {/* Rotas */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/users" element={<ListUsers />} />
@@ -81,6 +109,30 @@ function App() {
         <Route path="/users/:id/edit" element={<UserForm />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/profile" element={<ProfilePage />} />
+
+        {/* Proteção por tipo de usuário */}
+        {user?.tipo === "Estabelecimento" && (
+          <Route
+            path="/dashboard-estabelecimento"
+            element={<DashboardEstabelecimento />}
+          />
+        )}
+
+        {user?.tipo === "Motoboy" && (
+          <Route
+            path="/dashboard-motoboy"
+            element={<DashboardMotoboy />}
+          />
+        )}
+
+        <Route
+          path="*"
+          element={
+            <h1 className="text-center mt-8">
+              404 - Página Não Encontrada
+            </h1>
+          }
+        />
       </Routes>
     </div>
   );
