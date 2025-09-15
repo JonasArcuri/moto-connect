@@ -29,11 +29,20 @@ function DashboardEstabelecimento() {
         <aside className="w-64 bg-[#4d4d4d] text-white p-4 flex flex-col shadow-lg">
           <h2 className="text-xl font-bold mb-6 text-gray-100">Menu Estabelecimento</h2>
           <nav className="flex flex-col gap-4">
-            <button className="bg-[#FA9D06] text-black font-semibold py-2 px-4 rounded-md hover:bg-[#e68a00] transition-colors shadow-md">
+            <button
+              onClick={() => navigate('/feedestabelecimento')}
+              className="bg-[#FA9D06] text-black font-semibold py-2 px-4 rounded-md hover:bg-[#e68a00] transition-colors shadow-md"
+            >
               Feed
             </button>
+            <button
+              onClick={() => navigate('/criar-vaga')}
+              className="bg-[#FA9D06] text-black font-semibold py-2 px-4 rounded-md hover:bg-[#e68a00] transition-colors shadow-md"
+            >
+              Criar Vaga
+            </button>
             <button className="bg-[#FA9D06] text-black font-semibold py-2 px-4 rounded-md hover:bg-[#e68a00] transition-colors shadow-md">
-              Vagas
+              Vagas Ativas
             </button>
             <button className="bg-[#FA9D06] text-black font-semibold py-2 px-4 rounded-md hover:bg-[#e68a00] transition-colors shadow-md">
               Candidatos

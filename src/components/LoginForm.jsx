@@ -46,7 +46,7 @@ function LoginForm() {
                             navigate('/dashboard-estabelecimento');
                             break;
                         case 'Motoboy':
-                            navigate('/profile');
+                            navigate('/dashboard-motoboy');
                             break;
                         default:
                             navigate('/profile');
@@ -139,7 +139,7 @@ function LoginForm() {
                         </div>
 
                         <a 
-                            href="/esqueci-senha" 
+                            href="/reset" 
                             className="bg-[#FA9D06] text-black py-3 rounded-md hover:bg-[#e68a00] hover:shadow-lg transform hover:scale-[1.02]"
                         >
                             Esqueci minha senha

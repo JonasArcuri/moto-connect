@@ -40,7 +40,8 @@ export const login = async (email, password) => {
                 name: response.data.name,
                 email: response.data.email,
                 tipo: response.data.tipo,
-                message: response.data.message, // ✅ corrigido
+                estabelecimentoId: response.data.estabelecimentoId ?? null, // 👈 GUARDA O ID DO ESTABELECIMENTO
+                message: response.data.message || response.data.token,      // 👈 usa message ou token (compatível com backend)
                 isAuthenticated: true,
                 loginTime: new Date().toISOString()
             };
@@ -50,7 +51,7 @@ export const login = async (email, password) => {
             return {
                 success: true,
                 data: userData,
-                message: response.data.message || 'Login realizado com sucesso!' // ✅ corrigido
+                message: userData.message || 'Login realizado com sucesso!'
             };
         } else {
             throw new Error('Resposta inválida do servidor');

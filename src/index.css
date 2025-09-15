@@ -50,6 +50,14 @@ button:hover {
   border-color: #FA9D06;
 }
 
+.visu {
+  background-color: #0694FA;
+}
+
+.match {
+  background-color: #FA9D06;
+}
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
